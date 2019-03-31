@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".VoteActivity"
+    tools:showIn="@layout/activity_vote">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/colorPrimary"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="creator.username"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="2sp"
+                android:paddingTop="15sp"
+                android:paddingBottom="10sp"
+                android:paddingLeft="5sp"
+                android:paddingRight="5sp">
+
+                <Button
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary"
+                    android:textColor="#ffffff"
+                    android:textSize="15sp"
+                    android:layout_weight="1"
+                    android:text="+"
+                    />
+
+
+
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:text="Mexican Burritos and Pasta"
+                    android:maxLength="26"
+                    android:textSize="22sp"
+                    android:gravity="center"
+                    />
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="5"
+                    android:textSize="25sp"
+                    android:gravity="center"
+                    />
+
+                <Button
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:textColor="#ffffff"
+                    android:textSize="20dp"
+
+                    android:text="-"/>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/colorPrimary"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="creator.username"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="2sp"
+                android:paddingTop="15sp"
+                android:paddingBottom="10sp"
+                android:paddingLeft="5sp"
+                android:paddingRight="5sp">
+
+                <Button
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary"
+                    android:textColor="#ffffff"
+                    android:textSize="15sp"
+                    android:layout_weight="1"
+                    android:text="+"
+                    />
+
+
+
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:text="Mexican Burritos and Pasta"
+                    android:maxLength="26"
+                    android:textSize="22sp"
+                    android:gravity="center"
+                    />
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="5"
+                    android:textSize="25sp"
+                    android:gravity="center"
+                    />
+
+                <Button
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:textColor="#ffffff"
+                    android:textSize="20dp"
+
+                    android:text="-"/>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
