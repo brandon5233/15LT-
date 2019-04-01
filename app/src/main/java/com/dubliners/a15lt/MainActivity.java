@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         if(user!=null){
             displayName = user.getDisplayName();
             Intent myIntent = new Intent(MainActivity.this, weekdays.class);
-            myIntent.putExtra("username", user.getDisplayName());
+            myIntent.putExtra("userDisplayName", user.getDisplayName());
             myIntent.putExtra("uid", user.getUid());
             MainActivity.this.startActivityForResult(myIntent, 100);
         }
