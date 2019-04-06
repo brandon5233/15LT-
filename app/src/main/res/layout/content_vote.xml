@@ -7,150 +7,487 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".VoteActivity"
     tools:showIn="@layout/activity_vote">
+<android.support.v4.widget.SwipeRefreshLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/swipeRefreshLayout">
 
-    <LinearLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="20dp">
-
-        <android.support.v7.widget.CardView
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/colorPrimary"
-            android:layout_marginBottom="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="creator.username"/>
-
+            android:layout_height="match_parent"
+            android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_marginTop="2sp"
-                android:paddingTop="15sp"
-                android:paddingBottom="10sp"
-                android:paddingLeft="5sp"
-                android:paddingRight="5sp">
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:id="@+id/linear_layout_hasDishes"
+                android:visibility="gone"
+                android:layout_weight="1">
 
-                <Button
-                    android:layout_width="0px"
-                    android:layout_height="match_parent"
-                    android:background="@color/colorPrimary"
-                    android:textColor="#ffffff"
-                    android:textSize="15sp"
-                    android:layout_weight="1"
-                    android:text="+"
-                    />
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/cardBackground"
+                    android:layout_marginBottom="10dp"
+                    android:visibility="invisible"
+                    android:layout_marginVertical="10sp">
+
+                    <!--
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="creator.username"/>  -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="2sp"
+                        >
+
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:textColor="#ffffff"
+                            android:background="@color/cardBackground"
+                            android:textSize="15sp"
+                            android:layout_weight="1"
+                            android:text="+"
+
+                            />
 
 
+                        <LinearLayout
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_weight="4">
+                            <TextView
+                                android:layout_height="0px"
+                                android:layout_width="match_parent"
+                                android:layout_weight="1.1"
+                                android:maxLength="26"
+                                android:textSize="20sp"
+                                android:textColor="@color/textPrimary"
+                                android:padding="0px"
+                                android:gravity="center"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                />
+                            <TextView
+                                android:layout_height="0px"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0.9"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                android:textColor="@color/textSecondary"
+                                />
+                        </LinearLayout>
+
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:textColor="#ffffff"
+                            android:textSize="25sp"
+                            android:background="@color/cardBackground"
+                            android:layout_weight="1"
+                            android:text="-"/>
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/cardBackground"
+                    android:layout_marginBottom="10dp"
+                    android:visibility="invisible"
+                    android:layout_marginVertical="10sp">
+
+                    <!--
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="creator.username"/>  -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="2sp"
+                        >
+
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:textColor="#ffffff"
+                            android:background="@color/cardBackground"
+                            android:textSize="15sp"
+                            android:layout_weight="1"
+                            android:text="+"
+
+                            />
 
 
-                <TextView
-                    android:layout_width="0px"
-                    android:layout_height="match_parent"
-                    android:layout_weight="5"
-                    android:text="Mexican Burritos and Pasta"
-                    android:maxLength="26"
-                    android:textSize="22sp"
-                    android:gravity="center"
-                    />
+                        <LinearLayout
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_weight="4">
+                            <TextView
+                                android:layout_height="0px"
+                                android:layout_width="match_parent"
+                                android:layout_weight="1.1"
+                                android:maxLength="26"
+                                android:textSize="20sp"
+                                android:textColor="@color/textPrimary"
+                                android:padding="0px"
+                                android:gravity="center"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                />
+                            <TextView
+                                android:layout_height="0px"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0.9"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                android:textColor="@color/textSecondary"
+                                />
+                        </LinearLayout>
 
-                <TextView
-                    android:layout_width="0px"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="5"
-                    android:textSize="25sp"
-                    android:gravity="center"
-                    />
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:textColor="#ffffff"
+                            android:textSize="25sp"
+                            android:background="@color/cardBackground"
+                            android:layout_weight="1"
+                            android:text="-"/>
 
-                <Button
-                    android:layout_width="0px"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimary"
-                    android:textColor="#ffffff"
-                    android:textSize="20dp"
+                    </LinearLayout>
 
-                    android:text="-"/>
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/cardBackground"
+                    android:layout_marginBottom="10dp"
+                    android:visibility="invisible"
+                    android:layout_marginVertical="10sp">
+
+                    <!--
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="creator.username"/>  -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="2sp"
+                        >
+
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:textColor="#ffffff"
+                            android:background="@color/cardBackground"
+                            android:textSize="15sp"
+                            android:layout_weight="1"
+                            android:text="+"
+
+                            />
+
+
+                        <LinearLayout
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_weight="4">
+                            <TextView
+                                android:layout_height="0px"
+                                android:layout_width="match_parent"
+                                android:layout_weight="1.1"
+                                android:maxLength="26"
+                                android:textSize="20sp"
+                                android:textColor="@color/textPrimary"
+                                android:padding="0px"
+                                android:gravity="center"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                />
+                            <TextView
+                                android:layout_height="0px"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0.9"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                android:textColor="@color/textSecondary"
+                                />
+                        </LinearLayout>
+
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:textColor="#ffffff"
+                            android:textSize="25sp"
+                            android:background="@color/cardBackground"
+                            android:layout_weight="1"
+                            android:text="-"/>
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/cardBackground"
+                    android:layout_marginBottom="10dp"
+                    android:visibility="invisible"
+                    android:layout_marginVertical="10sp">
+
+                    <!--
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="creator.username"/>  -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="2sp"
+                        >
+
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:textColor="#ffffff"
+                            android:background="@color/cardBackground"
+                            android:textSize="15sp"
+                            android:layout_weight="1"
+                            android:text="+"
+
+                            />
+
+
+                        <LinearLayout
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_weight="4">
+                            <TextView
+                                android:layout_height="0px"
+                                android:layout_width="match_parent"
+                                android:layout_weight="1.1"
+                                android:maxLength="26"
+                                android:textSize="20sp"
+                                android:textColor="@color/textPrimary"
+                                android:padding="0px"
+                                android:gravity="center"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                />
+                            <TextView
+                                android:layout_height="0px"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0.9"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                android:textColor="@color/textSecondary"
+                                />
+                        </LinearLayout>
+
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:textColor="#ffffff"
+                            android:textSize="25sp"
+                            android:background="@color/cardBackground"
+                            android:layout_weight="1"
+                            android:text="-"/>
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/cardBackground"
+                    android:layout_marginBottom="10dp"
+                    android:visibility="invisible"
+                    android:layout_marginVertical="10sp">
+
+                    <!--
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="creator.username"/>  -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="2sp"
+                        >
+
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:textColor="#ffffff"
+                            android:background="@color/cardBackground"
+                            android:textSize="15sp"
+                            android:layout_weight="1"
+                            android:text="+"
+
+                            />
+
+
+                        <LinearLayout
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_weight="4">
+                            <TextView
+                                android:layout_height="0px"
+                                android:layout_width="match_parent"
+                                android:layout_weight="1.1"
+                                android:maxLength="26"
+                                android:textSize="20sp"
+                                android:textColor="@color/textPrimary"
+                                android:padding="0px"
+                                android:gravity="center"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                />
+                            <TextView
+                                android:layout_height="0px"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0.9"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                android:textColor="@color/textSecondary"
+                                />
+                        </LinearLayout>
+
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:textColor="#ffffff"
+                            android:textSize="25sp"
+                            android:background="@color/cardBackground"
+                            android:layout_weight="1"
+                            android:text="-"/>
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/cardBackground"
+                    android:layout_marginBottom="10dp"
+                    android:visibility="invisible"
+                    android:layout_marginVertical="10sp">
+
+                    <!--
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="creator.username"/>  -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="2sp"
+                        >
+
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:textColor="#ffffff"
+                            android:background="@color/cardBackground"
+                            android:textSize="15sp"
+                            android:layout_weight="1"
+                            android:text="+"
+
+                            />
+
+
+                        <LinearLayout
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_weight="4">
+                            <TextView
+                                android:layout_height="0px"
+                                android:layout_width="match_parent"
+                                android:layout_weight="1.1"
+                                android:maxLength="26"
+                                android:textSize="20sp"
+                                android:textColor="@color/textPrimary"
+                                android:padding="0px"
+                                android:gravity="center"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                />
+                            <TextView
+                                android:layout_height="0px"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0.9"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                android:textColor="@color/textSecondary"
+                                />
+                        </LinearLayout>
+
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:textColor="#ffffff"
+                            android:textSize="25sp"
+                            android:background="@color/cardBackground"
+                            android:layout_weight="1"
+                            android:text="-"/>
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
 
             </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/colorPrimary"
-            android:layout_marginBottom="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="creator.username"/>
-
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_marginTop="2sp"
-                android:paddingTop="15sp"
-                android:paddingBottom="10sp"
-                android:paddingLeft="5sp"
-                android:paddingRight="5sp">
-
-                <Button
-                    android:layout_width="0px"
-                    android:layout_height="match_parent"
-                    android:background="@color/colorPrimary"
-                    android:textColor="#ffffff"
-                    android:textSize="15sp"
-                    android:layout_weight="1"
-                    android:text="+"
-                    />
-
-
-
-
+                android:layout_height="0dp"
+                android:id="@+id/linear_layout_noDishes"
+                android:layout_weight="1">
                 <TextView
-                    android:layout_width="0px"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="5"
-                    android:text="Mexican Burritos and Pasta"
-                    android:maxLength="26"
-                    android:textSize="22sp"
+                    android:text="Its empty here \nAdd Dishes by clicking on the \nOrange Button below..."
+                    android:textSize="20sp"
+                    android:textColor="@color/colorAccent"
                     android:gravity="center"
-                    />
-
-                <TextView
-                    android:layout_width="0px"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="5"
-                    android:textSize="25sp"
-                    android:gravity="center"
-                    />
-
-                <Button
-                    android:layout_width="0px"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimary"
-                    android:textColor="#ffffff"
-                    android:textSize="20dp"
-
-                    android:text="-"/>
-
+                    android:layout_marginTop="200sp"/>
             </LinearLayout>
+        </LinearLayout>
 
-        </android.support.v7.widget.CardView>
+    </android.support.v4.widget.NestedScrollView>
 
-    </LinearLayout>
+
+</android.support.v4.widget.SwipeRefreshLayout>
 
 </android.support.constraint.ConstraintLayout>

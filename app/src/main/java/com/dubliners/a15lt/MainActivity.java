@@ -128,7 +128,10 @@ public class MainActivity extends AppCompatActivity {
             myIntent.putExtra("uid", user.getUid());
             MainActivity.this.startActivityForResult(myIntent, 100);
         }
-        Toast.makeText(MainActivity.this, "user = " + displayName, Toast.LENGTH_SHORT).show();
+        else{
+            signIn();
+        }
+       // Toast.makeText(MainActivity.this, "user = " + displayName, Toast.LENGTH_SHORT).show();
     }
 
 
