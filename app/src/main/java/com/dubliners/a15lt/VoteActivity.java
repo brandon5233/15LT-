@@ -3,7 +3,10 @@ package com.dubliners.a15lt;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -48,7 +51,7 @@ public class VoteActivity extends AppCompatActivity {
     private final String COLLECTION_DISHES = "Dishes";
     private final int MAX_CARDS = 6;
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    Vibrator vibrator;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String userDisplayName, uid, selectedDay;
     LinearLayout linear_layout_hasDishes, linear_layout_noDishes;
@@ -73,6 +76,8 @@ public class VoteActivity extends AppCompatActivity {
         toolbar.setTitle(selectedDay + "\'s Dishes");
         setSupportActionBar(toolbar);
 
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
 
         getDishesFromServer();
 
@@ -81,6 +86,7 @@ public class VoteActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                vibrate();
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                         */
@@ -141,10 +147,6 @@ public class VoteActivity extends AppCompatActivity {
     }
 
     private void addNewDish(final String dishName) {
-
-        Log.d("Current Week:" , week_of_year);
-        Log.d("Current Day:" , day_of_week);
-        Log.d("Current year:" , current_year);
 
         Dish dish = new Dish();
         dish.setCreator(userDisplayName);
@@ -216,39 +218,38 @@ public class VoteActivity extends AppCompatActivity {
 
                     CardView card = (CardView)linear_layout_hasDishes.getChildAt(counter);
 
-
-                    card.setVisibility(View.VISIBLE);
-                    LinearLayout innerHorizontalLayout = (LinearLayout)card.getChildAt(0);
-                    LinearLayout innerVerticalLayout = (LinearLayout) innerHorizontalLayout.getChildAt(1);
-                    TextView dishName = (TextView) innerVerticalLayout.getChildAt(0);
-                    TextView voteCount = (TextView) innerVerticalLayout.getChildAt(1);
-                    Button buttonplus = (Button) innerHorizontalLayout.getChildAt(0);
-                    Button buttonminus = (Button) innerHorizontalLayout.getChildAt(2);
-
-                    dishName.setText(dish.getDishName());
-                    voteCount.setText(dish.getVoteCount());
-
-                    buttonplus.setOnClickListener(new View.OnClickListener() {
+                    card.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            vibrate();
                             if (dish.getVoterList().contains(uid)){
-                                Toast.makeText(VoteActivity.this, "You've already voted for that", Toast.LENGTH_SHORT).show();
+                                downVote(document.getId(), dish.getVoteCount());
                             }
                             else{
                                 upVote(document.getId(), dish.getVoteCount());
                             }
-
                         }
-                    });
+                    }
+                    );
 
-                    buttonminus.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (dish.getVoterList().contains(uid)){
-                                downVote(document.getId(), dish.getVoteCount());
-                            }
-                        }
-                    });
+                    card.setVisibility(View.VISIBLE);
+
+                    LinearLayout linearLayout = (LinearLayout)card.getChildAt(0);
+                    TextView dishName = (TextView) linearLayout.getChildAt(0);
+                    TextView voteCount = (TextView) linearLayout.getChildAt(1);
+
+                    dishName.setText(dish.getDishName());
+                    voteCount.setText(dish.getVoteCount());
+
+                    if(dish.getVoterList().contains(uid)){
+                        dishName.setTextColor(getColor(R.color.colorAccent));
+                        voteCount.setTextColor(getColor(R.color.colorAccent));
+                    }
+                    else{
+                        dishName.setTextColor(getColor(R.color.textPrimary));
+                        voteCount.setTextColor(getColor(R.color.textSecondary));
+                    }
+
                     counter = (counter<=4)?counter+1:5;
                 }
             }
@@ -295,4 +296,13 @@ public class VoteActivity extends AppCompatActivity {
         InputMethodManager inputMethodManager = (InputMethodManager) getBaseContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
+    private void vibrate(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            vibrator.vibrate(50);
+        }
+    }
+
 }
