@@ -15,15 +15,17 @@
         <activity
             android:name=".vote_misc"
             android:label="@string/title_activity_vote_misc"
+            android:parentActivityName=".weekdays"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".vote_movie"
+            android:name=".vote_movies"
             android:label="@string/title_activity_vote_movie"
             android:parentActivityName=".weekdays"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".VoteActivity"
+            android:name=".vote_dishes"
             android:label="@string/title_activity_vote"
+            android:parentActivityName=".weekdays"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".weekdays"

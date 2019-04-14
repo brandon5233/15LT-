@@ -7,5 +7,12 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".vote_misc"
     tools:showIn="@layout/activity_vote_misc">
-
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:textSize="20sp"
+    android:textAlignment="center"
+    android:textColor="@color/colorAccent"
+    android:text="Voting here will be available after next week's update.. Stay Tuned!"/>
 </android.support.constraint.ConstraintLayout>

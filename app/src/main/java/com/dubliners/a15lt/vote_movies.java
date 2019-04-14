@@ -1,3 +1,34 @@
+/*package com.dubliners.a15lt;
+
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+
+public class vote_movie extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_vote_movie);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+    }
+
+}
+*/
+
 package com.dubliners.a15lt;
 
 import android.content.Context;
@@ -9,6 +40,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NavUtils;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +48,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -39,45 +72,50 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class VoteActivity extends AppCompatActivity {
+public class vote_movies extends AppCompatActivity {
     private static final String TAG = "Database Writer";
-    private  final Calendar calender = Calendar.getInstance();
-    private final String week_of_year = String.valueOf(calender.get(Calendar.WEEK_OF_YEAR));
-    private final String day_of_week = calender.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
-    private final String current_year = String.valueOf(calender.get(Calendar.YEAR));
-    private final String collectionID = current_year+".week"+week_of_year;
-    private final String COLLECTION_DISHES = "Dishes";
+
+    //private  final Calendar calender = Calendar.getInstance();
+    //private final String week_of_year = String.valueOf(calender.get(Calendar.WEEK_OF_YEAR));
+    //private final String day_of_week = calender.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
+    //private final String current_year = String.valueOf(calender.get(Calendar.YEAR));
+    //private final String collectionID = current_year+".week"+week_of_year;
+    private final String COLLECTION_NAME = "Movies";
     private final int MAX_CARDS = 6;
     private SwipeRefreshLayout swipeRefreshLayout;
+
     Vibrator vibrator;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    String userDisplayName, uid, selectedDay;
+    String userDisplayName, uid;
     LinearLayout linear_layout_hasDishes, linear_layout_noDishes;
     QuerySnapshot documentList = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_vote_dishes);
+        setContentView(R.layout.activity_vote_movie);
 
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-        linear_layout_hasDishes = findViewById(R.id.linear_layout_hasDishes);
-        linear_layout_noDishes = findViewById(R.id.linear_layout_noDishes);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout1);
+        linear_layout_hasDishes = findViewById(R.id.linear_layout_hasMovies);
+        linear_layout_noDishes = findViewById(R.id.linear_layout_noMovies);
         linear_layout_hasDishes.setVisibility(View.GONE);
 
         Intent intent = getIntent();
         userDisplayName = intent.getStringExtra("userDisplayName");
+        Log.i("DISPLAY NAME", userDisplayName);
         uid = intent.getStringExtra("uid");
-        selectedDay = intent.getStringExtra("selectedDay");
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(selectedDay + "\'s Dishes");
+        toolbar.setTitle(R.string.title_activity_vote_movie);
         setSupportActionBar(toolbar);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 
-        getDishesFromServer();
+        getMoviesFromServer();
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -89,10 +127,10 @@ public class VoteActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                         */
                 if(documentList!=null && documentList.size()<6){
-                    showDialogBox("What's cooking?", "", "", "add");
+                    showDialogBox("Add a movie", "", "", "add");
                 }
                 else{
-                    Toast.makeText(VoteActivity.this, "Too many dishes !", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(vote_movies.this, "Too many movies !", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -101,18 +139,18 @@ public class VoteActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getDishesFromServer();
+                getMoviesFromServer();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
 
     private void showDialogBox(String alertBoxTitle, final String documentId, String defaultString, final String task){
-        AlertDialog.Builder builder = new AlertDialog.Builder(VoteActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(vote_movies.this);
         builder.setTitle(alertBoxTitle.trim());
 
         // Set up the input
-        final EditText input = new EditText(VoteActivity.this);
+        final EditText input = new EditText(vote_movies.this);
         input.setText(defaultString);
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -122,17 +160,17 @@ public class VoteActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String dishName = input.getText().toString();
-                dishName = WordUtils.capitalizeFully(dishName);
+                String movieName = input.getText().toString();
+                movieName = WordUtils.capitalizeFully(movieName);
                 hideKeyboard();
-                if(dishName.trim().equals("")){
-                    Toast.makeText(VoteActivity.this, "We can't vote for a blank dish!", Toast.LENGTH_SHORT).show();
+                if(movieName.trim().equals("")){
+                    Toast.makeText(vote_movies.this, "We can't vote for a blank movie!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 switch (task){
-                    case "add": addNewDish(dishName);break;
-                    case "edit": editDish(documentId, dishName);break;
+                    case "add": addNewMovie(movieName);break;
+                    case "edit": editMovie(documentId, movieName);break;
                 }
 
             }
@@ -149,24 +187,22 @@ public class VoteActivity extends AppCompatActivity {
         showKeyboard();
     }
 
-    private void addNewDish(final String dishName) {
+    private void addNewMovie(final String movieName) {
 
-        Dish dish = new Dish();
-        dish.setCreator(userDisplayName);
-        dish.setCreator_uid(uid);
-        dish.setDishName(dishName);
-        dish.setVoteCount("1");
-        dish.setVoterList(Arrays.asList(uid));
-        db.collection(collectionID)
-                .document(selectedDay)
-                .collection(COLLECTION_DISHES)
-                .add(dish)
+        Movie movie = new Movie();
+        movie.setCreator(userDisplayName);
+        movie.setCreator_uid(uid);
+        movie.setMovieName(movieName);
+        movie.setVoteCount("1");
+        movie.setVoterList(Arrays.asList(uid));
+        db.collection(COLLECTION_NAME)
+                .add(movie)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
-                        Toast.makeText(VoteActivity.this, dishName + " added !", Toast.LENGTH_SHORT).show();
-                        getDishesFromServer();
+                        Toast.makeText(vote_movies.this, movieName + " added !", Toast.LENGTH_SHORT).show();
+                        getMoviesFromServer();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -177,9 +213,8 @@ public class VoteActivity extends AppCompatActivity {
                 });
     }
 
-    private void getDishesFromServer(){
-        db.collection(collectionID).document(selectedDay)
-                .collection(COLLECTION_DISHES)
+    private void getMoviesFromServer(){
+        db.collection(COLLECTION_NAME)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -216,30 +251,30 @@ public class VoteActivity extends AppCompatActivity {
                 int counter = 0;
                 for (final QueryDocumentSnapshot document : documentList) {
                     Log.d(TAG, document.getId() + " => " + document.getData());
-                    final Dish dish = document.toObject(Dish.class);
+                    final Movie movie = document.toObject(Movie.class);
 
                     CardView card = (CardView)linear_layout_hasDishes.getChildAt(counter);
 
                     card.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            vibrate();
-                            if (dish.getVoterList().contains(uid)){
-                                downVote(document.getId(), dish.getVoteCount());
-                            }
-                            else{
-                                upVote(document.getId(), dish.getVoteCount());
-                            }
-                        }
-                    }
+                                                @Override
+                                                public void onClick(View v) {
+                                                    vibrate();
+                                                    if (movie.getVoterList().contains(uid)){
+                                                        downVote(document.getId(), movie.getVoteCount());
+                                                    }
+                                                    else{
+                                                        upVote(document.getId(), movie.getVoteCount());
+                                                    }
+                                                }
+                                            }
                     );
 
                     card.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View v) {
                             vibrate();
-                            if(dish.getCreator_uid().equals(uid)){
-                                showDialogBox("Edit Dish", document.getId(), dish.getDishName(), "edit");
+                            if(movie.getCreator_uid().equals(uid)){
+                                showDialogBox("Edit Dish", document.getId(), movie.getMovieName(), "edit");
                             }
                             return false;
                         }
@@ -248,18 +283,18 @@ public class VoteActivity extends AppCompatActivity {
                     card.setVisibility(View.VISIBLE);
 
                     LinearLayout linearLayout = (LinearLayout)card.getChildAt(0);
-                    TextView dishName = (TextView) linearLayout.getChildAt(0);
+                    TextView movieName = (TextView) linearLayout.getChildAt(0);
                     TextView voteCount = (TextView) linearLayout.getChildAt(1);
 
-                    dishName.setText(dish.getDishName());
-                    voteCount.setText(dish.getVoteCount());
+                    movieName.setText(movie.getMovieName());
+                    voteCount.setText(movie.getVoteCount());
 
-                    if(dish.getVoterList().contains(uid)){
-                        dishName.setTextColor(getColor(R.color.colorAccent));
+                    if(movie.getVoterList().contains(uid)){
+                        movieName.setTextColor(getColor(R.color.colorAccent));
                         voteCount.setTextColor(getColor(R.color.colorAccent));
                     }
                     else{
-                        dishName.setTextColor(getColor(R.color.textPrimary));
+                        movieName.setTextColor(getColor(R.color.textPrimary));
                         voteCount.setTextColor(getColor(R.color.textSecondary));
                     }
 
@@ -276,50 +311,47 @@ public class VoteActivity extends AppCompatActivity {
 
     }
 
-    private void editDish(String documentId, String dishName) {
-       DocumentReference dishReference =
-                db.collection(collectionID).document(selectedDay)
-                        .collection(COLLECTION_DISHES)
+    private void editMovie(String documentId, String movieName) {
+        DocumentReference dishReference =
+                db.collection(COLLECTION_NAME)
                         .document(documentId);
 
-        dishReference.update("dishName",dishName )
+        dishReference.update("movieName",movieName )
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        Toast.makeText(VoteActivity.this, "Dish Updated!", Toast.LENGTH_SHORT).show();
-                        getDishesFromServer();
+                        Toast.makeText(vote_movies.this, "Dish Updated!", Toast.LENGTH_SHORT).show();
+                        getMoviesFromServer();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error updating document", e);
-                        Toast.makeText(VoteActivity.this, "Something went wrong, try again later.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(vote_movies.this, "Something went wrong, try again later.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     private void downVote(String documentId, String currentVoteCount) {
-        DocumentReference dishReference =
-                db.collection(collectionID).document(selectedDay)
-                        .collection(COLLECTION_DISHES)
+        DocumentReference movieReference =
+                db.collection(COLLECTION_NAME)
                         .document(documentId);
 
-        dishReference.update("voterList", FieldValue.arrayRemove(uid));
-        dishReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) - 1 ));
-        getDishesFromServer();
+        movieReference.update("voterList", FieldValue.arrayRemove(uid));
+        movieReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) - 1 ));
+        getMoviesFromServer();
     }
 
     private void upVote(String documentId, String currentVoteCount) {
-        DocumentReference dishReference =
-        db.collection(collectionID).document(selectedDay)
-                .collection(COLLECTION_DISHES)
-                .document(documentId);
+        DocumentReference movieReference =
+                db.collection(COLLECTION_NAME)
+                        .document(documentId);
 
-        dishReference.update("voterList", FieldValue.arrayUnion(uid));
-        dishReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) + 1 ));
-        getDishesFromServer();
+        movieReference.update("voterList", FieldValue.arrayUnion(uid));
+        movieReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) + 1 ));
+        getMoviesFromServer();
     }
 
 
@@ -341,5 +373,6 @@ public class VoteActivity extends AppCompatActivity {
             vibrator.vibrate(40);
         }
     }
+
 
 }

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -13,10 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -56,7 +51,7 @@ public class weekdays extends AppCompatActivity {
         vibrate();
         String selectedDay = view.getResources().getResourceEntryName(view.getId());
         Log.i("Clicked Button = ", selectedDay);
-        Intent startVotingIntent = new Intent(weekdays.this, VoteActivity.class);
+        Intent startVotingIntent = new Intent(weekdays.this, vote_dishes.class);
         startVotingIntent.putExtra("userDisplayName", userDisplayName);
         startVotingIntent.putExtra("uid", uid);
         startVotingIntent.putExtra("selectedDay", selectedDay);
@@ -83,13 +78,17 @@ public class weekdays extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.setting_vote_movie:
-                    Intent intent = new Intent(weekdays.this, vote_movie.class);
-                    weekdays.this.startActivity(intent);
+                    Intent movieIntent = new Intent(weekdays.this, vote_movies.class);
+                    movieIntent.putExtra("userDisplayName", userDisplayName);
+                    movieIntent.putExtra("uid", uid);
+                    weekdays.this.startActivity(movieIntent);
                 break;
 
             case R.id.setting_vote_misc:
-                Intent intent1 = new Intent(weekdays.this, vote_misc.class);
-                weekdays.this.startActivity(intent1);
+                Intent miscIntent = new Intent(weekdays.this, vote_misc.class);
+                miscIntent.putExtra("userDisplayName", userDisplayName);
+                miscIntent.putExtra("uid", uid);
+                weekdays.this.startActivity(miscIntent);
                 break;
         }
         return true;
