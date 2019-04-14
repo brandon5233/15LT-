@@ -8,7 +8,10 @@ import android.os.Vibrator;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -33,7 +36,9 @@ public class weekdays extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weekdays);
-
+        Toolbar toolbar = findViewById(R.id.toolbar_weekdays);
+        setSupportActionBar(toolbar);
+        
         Intent intent = getIntent();
         userDisplayName = intent.getStringExtra("userDisplayName");
         uid = intent.getStringExtra("uid");
@@ -65,5 +70,28 @@ public class weekdays extends AppCompatActivity {
             //deprecated in API 26
             vibrator.vibrate(40);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_weekdays, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.setting_vote_movie:
+                    Intent intent = new Intent(weekdays.this, vote_movie.class);
+                    weekdays.this.startActivity(intent);
+                break;
+
+            case R.id.setting_vote_misc:
+                Intent intent1 = new Intent(weekdays.this, vote_misc.class);
+                weekdays.this.startActivity(intent1);
+                break;
+        }
+        return true;
     }
 }

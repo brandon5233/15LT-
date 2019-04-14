@@ -16,10 +16,8 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -60,7 +58,7 @@ public class VoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_vote);
+        setContentView(R.layout.activity_vote_dishes);
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         linear_layout_hasDishes = findViewById(R.id.linear_layout_hasDishes);
