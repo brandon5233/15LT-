@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Sunday"
+            android:text="@string/Sunday"
             android:textColor="@color/textPrimary"
             android:onClick="launchVote"
             />
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Monday"
+            android:text="@string/Monday"
             android:textColor="@color/textPrimary"
             android:onClick="launchVote"
             />
@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Tuesday"
+            android:text="@string/Tuesday"
             android:textColor="@color/textPrimary"
             android:onClick="launchVote"
             />
@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Wednesday"
+            android:text="@string/Wednesday"
             android:textColor="@color/textPrimary"
             android:onClick="launchVote"
             />
@@ -62,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Thursday"
+            android:text="@string/Thursday"
             android:textColor="@color/textPrimary"
             android:onClick="launchVote"
             />
@@ -72,7 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Friday"
+            android:text="@string/Friday"
             android:textColor="@color/textPrimary"
             android:onClick="launchVote"
             />
@@ -82,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Saturday"
+            android:text="@string/Saturday"
             android:textColor="@color/textPrimary"
             android:onClick="launchVote"
             />

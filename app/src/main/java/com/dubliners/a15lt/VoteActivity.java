@@ -91,7 +91,7 @@ public class VoteActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                         */
                 if(documentList!=null && documentList.size()<6){
-                    showDialogBox();
+                    showDialogBox("What's cooking?", "", "", "add");
                 }
                 else{
                     Toast.makeText(VoteActivity.this, "Too many dishes !", Toast.LENGTH_SHORT).show();
@@ -109,12 +109,13 @@ public class VoteActivity extends AppCompatActivity {
         });
     }
 
-    private void showDialogBox(){
+    private void showDialogBox(String alertBoxTitle, final String documentId, String defaultString, final String task){
         AlertDialog.Builder builder = new AlertDialog.Builder(VoteActivity.this);
-        builder.setTitle("What's cooking?");
+        builder.setTitle(alertBoxTitle.trim());
 
         // Set up the input
         final EditText input = new EditText(VoteActivity.this);
+        input.setText(defaultString);
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
@@ -131,7 +132,11 @@ public class VoteActivity extends AppCompatActivity {
                     return;
                 }
 
-                addNewDish(dishName);
+                switch (task){
+                    case "add": addNewDish(dishName);break;
+                    case "edit": editDish(documentId, dishName);break;
+                }
+
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -157,11 +162,10 @@ public class VoteActivity extends AppCompatActivity {
         db.collection(collectionID)
                 .document(selectedDay)
                 .collection(COLLECTION_DISHES)
-                .document(dishName)
-                .set(dish)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                .add(dish)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
+                    public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
                         Toast.makeText(VoteActivity.this, dishName + " added !", Toast.LENGTH_SHORT).show();
                         getDishesFromServer();
@@ -232,6 +236,17 @@ public class VoteActivity extends AppCompatActivity {
                     }
                     );
 
+                    card.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            vibrate();
+                            if(dish.getCreator_uid().equals(uid)){
+                                showDialogBox("Edit Dish", document.getId(), dish.getDishName(), "edit");
+                            }
+                            return false;
+                        }
+                    });
+
                     card.setVisibility(View.VISIBLE);
 
                     LinearLayout linearLayout = (LinearLayout)card.getChildAt(0);
@@ -261,6 +276,30 @@ public class VoteActivity extends AppCompatActivity {
             linear_layout_noDishes.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    private void editDish(String documentId, String dishName) {
+       DocumentReference dishReference =
+                db.collection(collectionID).document(selectedDay)
+                        .collection(COLLECTION_DISHES)
+                        .document(documentId);
+
+        dishReference.update("dishName",dishName )
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                        Toast.makeText(VoteActivity.this, "Dish Updated!", Toast.LENGTH_SHORT).show();
+                        getDishesFromServer();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                        Toast.makeText(VoteActivity.this, "Something went wrong, try again later.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void downVote(String documentId, String currentVoteCount) {
@@ -301,7 +340,7 @@ public class VoteActivity extends AppCompatActivity {
             vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
             //deprecated in API 26
-            vibrator.vibrate(50);
+            vibrator.vibrate(40);
         }
     }
 

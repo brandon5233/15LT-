@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
@@ -25,22 +26,24 @@ public class weekdays extends AppCompatActivity {
     private final String week_of_year = String.valueOf(calender.get(Calendar.WEEK_OF_YEAR));
     private final String day_of_week = calender.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
     private final String current_year = String.valueOf(calender.get(Calendar.YEAR));
+    private final String current_date = String.valueOf(calender.get(Calendar.DAY_OF_MONTH))+"."+String.valueOf(calender.get(Calendar.MONTH)+1);
     Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weekdays);
+
         Intent intent = getIntent();
         userDisplayName = intent.getStringExtra("userDisplayName");
         uid = intent.getStringExtra("uid");
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
+        Log.i("Date", current_date);
         //change background of current day button
         //change background using states in styles
         int currentDayButtonId = getResources().getIdentifier(day_of_week, "id", getBaseContext().getPackageName());
         findViewById(currentDayButtonId).setBackgroundColor(getResources().getColor(R.color.colorAccentAlternate));
-
     }
 
 
@@ -60,7 +63,7 @@ public class weekdays extends AppCompatActivity {
             vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
             //deprecated in API 26
-            vibrator.vibrate(50);
+            vibrator.vibrate(40);
         }
     }
 }
