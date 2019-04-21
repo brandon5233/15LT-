@@ -26,10 +26,11 @@ public class nav_drawer extends AppCompatActivity
                     fragment_vote_movies.OnFragmentInteractionListener,
                     fragment_vote_food.OnFragmentInteractionListener,
                     fragment_food.OnFragmentInteractionListener,
-                    fragment_vote_shopping.OnFragmentInteractionListener
+                    fragment_vote_shopping.OnFragmentInteractionListener,
+                    fragment_vote_misc.OnFragmentInteractionListener
 {
     String userDisplayName, uid, profilePicUrl, userEmail;
-
+    public static int EasterEggCounter = 5;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,12 +120,10 @@ public class nav_drawer extends AppCompatActivity
         } else if (id == R.id.nav_shopping) {
             fragment = fragment_vote_shopping.newInstance(userDisplayName,uid);
         } else if (id == R.id.nav_misc) {
-
+            fragment = fragment_vote_misc.newInstance(userDisplayName,uid);
         } else if (id == R.id.nav_about) {
                 fragment = new fragment_about();
-        } else if (id == R.id.nav_send) {
-
-        }
+        } //else if (id == R.id.nav_send) {}
 
 
 

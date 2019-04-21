@@ -371,7 +371,7 @@ public class fragment_vote_movies extends Fragment {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        Toast.makeText(getContext(), "Dish Updated!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Movie Updated!", Toast.LENGTH_SHORT).show();
                         getMoviesFromServer();
                     }
                 })

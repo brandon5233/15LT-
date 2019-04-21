@@ -38,48 +38,34 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Locale;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link fragment_vote_food.OnFragmentInteractionListener} interface
+ * {@link fragment_vote_movies.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link fragment_vote_food#newInstance} factory method to
+ * Use the {@link fragment_vote_movies#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class fragment_vote_food extends Fragment {
+public class fragment_vote_misc extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final String ARG_PARAM3 = "param3";
-
+    private final int MAX_CARDS = 30;
     // TODO: Rename and change types of parameters
+    private final String TAG = "FRAGMENT_VOTE_MISC";
+    private final String COLLECTION_NAME = "Misc";
 
-    private Context mContext;
-    private static final String TAG = "Database Writer";
-
-    private  final Calendar calender = Calendar.getInstance();
-    private final String week_of_year = String.valueOf(calender.get(Calendar.WEEK_OF_YEAR));
-    private final String day_of_week = calender.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
-    private final String current_year = String.valueOf(calender.get(Calendar.YEAR));
-    private final String collectionID = current_year+".week"+week_of_year;
-    private final String COLLECTION_DISHES = "Dishes";
-    private final int MAX_CARDS = 6;
-
-
-    private Vibrator vibrator;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private String userDisplayName, uid, selectedDay;
-    private LinearLayout linear_layout_hasDishes, linear_layout_noDishes;
-    private QuerySnapshot documentList = null;
     private OnFragmentInteractionListener mListener;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    String userDisplayName, uid, selectedDay;
+    LinearLayout linear_layout_hasDishes, linear_layout_noDishes;
+    QuerySnapshot documentList = null;
+    Vibrator vibrator;
 
-    public fragment_vote_food() {
+    public fragment_vote_misc() {
         // Required empty public constructor
     }
 
@@ -89,15 +75,14 @@ public class fragment_vote_food extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment fragment_vote_food.
+     * @return A new instance of fragment fragment_vote_misc.
      */
     // TODO: Rename and change types and number of parameters
-    public static fragment_vote_food newInstance(String param1, String param2, String param3) {
-        fragment_vote_food fragment = new fragment_vote_food();
+    public static fragment_vote_misc newInstance(String param1, String param2) {
+        fragment_vote_misc fragment = new fragment_vote_misc();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
-        args.putString(ARG_PARAM3, param3);
         fragment.setArguments(args);
         return fragment;
     }
@@ -108,50 +93,67 @@ public class fragment_vote_food extends Fragment {
         if (getArguments() != null) {
             userDisplayName = getArguments().getString(ARG_PARAM1);
             uid = getArguments().getString(ARG_PARAM2);
-            selectedDay = getArguments().getString(ARG_PARAM3);
         }
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_vote_food, container, false);
+        return inflater.inflate(R.layout.fragment_vote_misc, container, false);
 
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
-        linear_layout_hasDishes = view.findViewById(R.id.linear_layout_hasDishes);
-        linear_layout_noDishes = view.findViewById(R.id.linear_layout_noDishes);
-        linear_layout_hasDishes.setVisibility(View.GONE);
 
-        vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-        getDishesFromServer();
+    }
 
-        FloatingActionButton fab = view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                vibrate();
+    public void onActivityCreated(Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
+        View view = getView();
+        FloatingActionButton fab;
+        final SwipeRefreshLayout swipeRefreshLayout;
+        if(view!=null){
+            linear_layout_hasDishes = view.findViewById(R.id.linear_layout_hasMovies);
+            linear_layout_noDishes = view.findViewById(R.id.linear_layout_noMovies);
+            linear_layout_hasDishes.setVisibility(View.GONE);
+
+            fab = view.findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //vibrate();
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                         */
-                if(documentList!=null && documentList.size()<6){
-                    showDialogBox("What's cooking?", "", "", "add");
-                }
-                else{
-                    Toast.makeText(getContext(), "Too many dishes !", Toast.LENGTH_SHORT).show();
-                }
+                    if(documentList!=null && documentList.size()<6){
+                        showDialogBox("Add an Item", "", "", "add");
+                    }
+                    else{
+                        Toast.makeText(getContext(), "Too many items !", Toast.LENGTH_SHORT).show();
+                    }
 
-            }
-        });
+                }
+            });
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getDishesFromServer();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-        return view;
+            swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout1);
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    getMoviesFromServer();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            });
+
+            vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+
+        }
+
+        getMoviesFromServer();
+
+
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -164,7 +166,6 @@ public class fragment_vote_food extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -209,17 +210,17 @@ public class fragment_vote_food extends Fragment {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String dishName = input.getText().toString();
-                dishName = WordUtils.capitalizeFully(dishName);
+                String movieName = input.getText().toString();
+                movieName = WordUtils.capitalizeFully(movieName);
                 hideKeyboard();
-                if(dishName.trim().equals("")){
-                    Toast.makeText(getContext(), "We can't vote for a blank dish!", Toast.LENGTH_SHORT).show();
+                if(movieName.trim().equals("")){
+                    Toast.makeText(getContext(), "We can't vote for a blank item!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 switch (task){
-                    case "add": addNewDish(dishName);break;
-                    case "edit": editDish(documentId, dishName);break;
+                    case "add": addNewMovie(movieName);break;
+                    case "edit": editMovie(documentId, movieName);break;
                 }
 
             }
@@ -236,24 +237,22 @@ public class fragment_vote_food extends Fragment {
         showKeyboard();
     }
 
-    private void addNewDish(final String dishName) {
+    private void addNewMovie(final String movieName) {
 
-        Dish dish = new Dish();
-        dish.setCreator(userDisplayName);
-        dish.setCreator_uid(uid);
-        dish.setDishName(dishName);
-        dish.setVoteCount(((nav_drawer.EasterEggCounter==0)?"2":"1"));
-        dish.setVoterList(Arrays.asList(uid));
-        db.collection(collectionID)
-                .document(selectedDay)
-                .collection(COLLECTION_DISHES)
-                .add(dish)
+        Movie movie = new Movie();
+        movie.setCreator(userDisplayName);
+        movie.setCreator_uid(uid);
+        movie.setMovieName(movieName);
+        movie.setVoteCount("1");
+        movie.setVoterList(Arrays.asList(uid));
+        db.collection(COLLECTION_NAME)
+                .add(movie)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
-                        Toast.makeText(getContext(), dishName + " added !", Toast.LENGTH_SHORT).show();
-                        getDishesFromServer();
+                        Toast.makeText(getContext(), movieName + " added !", Toast.LENGTH_SHORT).show();
+                        getMoviesFromServer();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -264,16 +263,15 @@ public class fragment_vote_food extends Fragment {
                 });
     }
 
-    private void getDishesFromServer(){
-        db.collection(collectionID).document(selectedDay)
-                .collection(COLLECTION_DISHES)
+    private void getMoviesFromServer(){
+        db.collection(COLLECTION_NAME)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             documentList = task.getResult();
-                            displayCards();
+                            displayMovies();
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -281,7 +279,7 @@ public class fragment_vote_food extends Fragment {
                 });
     }
 
-    private void displayCards() {
+    private void displayMovies() {
         //set all cards to invisible
 
 
@@ -303,7 +301,7 @@ public class fragment_vote_food extends Fragment {
                 int counter = 0;
                 for (final QueryDocumentSnapshot document : documentList) {
                     Log.d(TAG, document.getId() + " => " + document.getData());
-                    final Dish dish = document.toObject(Dish.class);
+                    final Movie movie = document.toObject(Movie.class);
 
                     CardView card = (CardView)linear_layout_hasDishes.getChildAt(counter);
 
@@ -311,11 +309,11 @@ public class fragment_vote_food extends Fragment {
                                                 @Override
                                                 public void onClick(View v) {
                                                     vibrate();
-                                                    if (dish.getVoterList().contains(uid)){
-                                                        downVote(document.getId(), dish.getVoteCount());
+                                                    if (movie.getVoterList().contains(uid)){
+                                                        downVote(document.getId(), movie.getVoteCount());
                                                     }
                                                     else{
-                                                        upVote(document.getId(), dish.getVoteCount());
+                                                        upVote(document.getId(), movie.getVoteCount());
                                                     }
                                                 }
                                             }
@@ -325,8 +323,8 @@ public class fragment_vote_food extends Fragment {
                         @Override
                         public boolean onLongClick(View v) {
                             vibrate();
-                            if(dish.getCreator_uid().equals(uid)){
-                                showDialogBox("Edit Dish", document.getId(), dish.getDishName(), "edit");
+                            if(movie.getCreator_uid().equals(uid)){
+                                showDialogBox("Edit Item", document.getId(), movie.getMovieName(), "edit");
                             }
                             return false;
                         }
@@ -335,22 +333,22 @@ public class fragment_vote_food extends Fragment {
                     card.setVisibility(View.VISIBLE);
 
                     LinearLayout linearLayout = (LinearLayout)card.getChildAt(0);
-                    TextView dishName = (TextView) linearLayout.getChildAt(0);
+                    TextView movieName = (TextView) linearLayout.getChildAt(0);
                     TextView voteCount = (TextView) linearLayout.getChildAt(1);
 
-                    dishName.setText(dish.getDishName());
-                    voteCount.setText(dish.getVoteCount());
+                    movieName.setText(movie.getMovieName());
+                    voteCount.setText(movie.getVoteCount());
 
-                    if(dish.getVoterList().contains(uid)){
-                        dishName.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
-                        voteCount.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+                    if(movie.getVoterList().contains(uid)){
+                        movieName.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+                        voteCount.setTextColor(ContextCompat.getColor(getContext(),R.color.colorAccent));
                     }
                     else{
-                        dishName.setTextColor(ContextCompat.getColor(mContext, R.color.textPrimary));
-                        voteCount.setTextColor(ContextCompat.getColor(mContext, R.color.textSecondary));
+                        movieName.setTextColor(ContextCompat.getColor(getContext(),R.color.textPrimary));
+                        voteCount.setTextColor(ContextCompat.getColor(getContext(),R.color.textSecondary));
                     }
 
-                    counter = (counter<=4)?counter+1:5;
+                    counter = (counter<=28)?counter+1:29;
                 }
             }
 
@@ -363,19 +361,18 @@ public class fragment_vote_food extends Fragment {
 
     }
 
-    private void editDish(String documentId, String dishName) {
+    private void editMovie(String documentId, String movieName) {
         DocumentReference dishReference =
-                db.collection(collectionID).document(selectedDay)
-                        .collection(COLLECTION_DISHES)
+                db.collection(COLLECTION_NAME)
                         .document(documentId);
 
-        dishReference.update("dishName",dishName )
+        dishReference.update("movieName",movieName )
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        Toast.makeText(getContext(), "Dish Updated!", Toast.LENGTH_SHORT).show();
-                        getDishesFromServer();
+                        Toast.makeText(getContext(), "Item Updated!", Toast.LENGTH_SHORT).show();
+                        getMoviesFromServer();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -388,36 +385,34 @@ public class fragment_vote_food extends Fragment {
     }
 
     private void downVote(String documentId, String currentVoteCount) {
-        DocumentReference dishReference =
-                db.collection(collectionID).document(selectedDay)
-                        .collection(COLLECTION_DISHES)
+        DocumentReference movieReference =
+                db.collection(COLLECTION_NAME)
                         .document(documentId);
 
-        dishReference.update("voterList", FieldValue.arrayRemove(uid));
-        dishReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) - ((nav_drawer.EasterEggCounter==0)?2:1) ));
-        getDishesFromServer();
+        movieReference.update("voterList", FieldValue.arrayRemove(uid));
+        movieReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) - 1 ));
+        getMoviesFromServer();
     }
 
     private void upVote(String documentId, String currentVoteCount) {
-        DocumentReference dishReference =
-                db.collection(collectionID).document(selectedDay)
-                        .collection(COLLECTION_DISHES)
+        DocumentReference movieReference =
+                db.collection(COLLECTION_NAME)
                         .document(documentId);
 
-        dishReference.update("voterList", FieldValue.arrayUnion(uid));
-        dishReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) + ((nav_drawer.EasterEggCounter==0)?2:1) ));
-        getDishesFromServer();
+        movieReference.update("voterList", FieldValue.arrayUnion(uid));
+        movieReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) + 1 ));
+        getMoviesFromServer();
     }
 
 
 
     private void showKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     private void hideKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
     private void vibrate(){
@@ -428,5 +423,8 @@ public class fragment_vote_food extends Fragment {
             vibrator.vibrate(40);
         }
     }
+
+
+
 
 }
