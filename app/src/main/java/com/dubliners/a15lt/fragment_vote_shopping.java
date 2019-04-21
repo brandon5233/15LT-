@@ -2,6 +2,7 @@ package com.dubliners.a15lt;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,8 +38,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-import java.util.Arrays;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,8 +48,10 @@ import java.util.Arrays;
  * create an instance of this fragment.
  */
 public class fragment_vote_shopping extends Fragment {
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private Context mContext;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private final int MAX_CARDS = 30;
@@ -166,8 +167,10 @@ public class fragment_vote_shopping extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
+            mContext = context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -239,12 +242,11 @@ public class fragment_vote_shopping extends Fragment {
 
     private void addNewItem(final String itemName) {
 
-        Movie item = new Movie();
+        Item item = new Item();
         item.setCreator(userDisplayName);
         item.setCreator_uid(uid);
-        item.setMovieName(itemName);
-        item.setVoteCount("1");
-        item.setVoterList(Arrays.asList(uid));
+        item.setItemName(itemName);
+        item.setBought(false);
         db.collection(COLLECTION_NAME)
                 .add(item)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -271,7 +273,7 @@ public class fragment_vote_shopping extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             documentList = task.getResult();
-                            displayCards();
+                            displayItems();
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -279,7 +281,7 @@ public class fragment_vote_shopping extends Fragment {
                 });
     }
 
-    private void displayCards() {
+    private void displayItems() {
         //set all cards to invisible
 
 
@@ -301,7 +303,7 @@ public class fragment_vote_shopping extends Fragment {
                 int counter = 0;
                 for (final QueryDocumentSnapshot document : documentList) {
                     Log.d(TAG, document.getId() + " => " + document.getData());
-                    final Movie item = document.toObject(Movie.class);
+                    final Item item = document.toObject(Item.class);
 
                     CardView card = (CardView) linear_layout_hasItems.getChildAt(counter);
 
@@ -309,12 +311,7 @@ public class fragment_vote_shopping extends Fragment {
                                                 @Override
                                                 public void onClick(View v) {
                                                     vibrate();
-                                                    if (item.getVoterList().contains(uid)){
-                                                        downVote(document.getId(), item.getVoteCount());
-                                                    }
-                                                    else{
-                                                        upVote(document.getId(), item.getVoteCount());
-                                                    }
+                                                    toggleItemBought(document.getId(), item.isBought());
                                                 }
                                             }
                     );
@@ -324,7 +321,7 @@ public class fragment_vote_shopping extends Fragment {
                         public boolean onLongClick(View v) {
                             vibrate();
                             if(item.getCreator_uid().equals(uid)){
-                                showDialogBox("Edit Dish", document.getId(), item.getMovieName(), "edit");
+                                showDialogBox("Edit Item", document.getId(), item.getItemName(), "edit");
                             }
                             return false;
                         }
@@ -336,16 +333,16 @@ public class fragment_vote_shopping extends Fragment {
                     TextView itemName = (TextView) linearLayout.getChildAt(0);
                     TextView voteCount = (TextView) linearLayout.getChildAt(1);
 
-                    itemName.setText(item.getMovieName());
-                    voteCount.setText(item.getVoteCount());
+                    itemName.setText(item.getItemName());
+                    //voteCount.setText(item.getVoteCount());
 
-                    if(item.getVoterList().contains(uid)){
-                        itemName.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
-                        voteCount.setTextColor(ContextCompat.getColor(getContext(),R.color.colorAccent));
+                    if(item.isBought()){
+                        itemName.setPaintFlags(itemName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        //itemName.setTextColor(ContextCompat.getColor(mContext, R.color.textPrimary));
                     }
                     else{
-                        itemName.setTextColor(ContextCompat.getColor(getContext(),R.color.textPrimary));
-                        voteCount.setTextColor(ContextCompat.getColor(getContext(),R.color.textSecondary));
+                        itemName.setPaintFlags(itemName.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                        //itemName.setTextColor(ContextCompat.getColor(mContext, R.color.textPrimary));
                     }
 
                     counter = (counter<=28)?counter+1:29;
@@ -384,27 +381,14 @@ public class fragment_vote_shopping extends Fragment {
                 });
     }
 
-    private void downVote(String documentId, String currentVoteCount) {
+    private void toggleItemBought(String documentId, boolean isBought) {
         DocumentReference itemReference =
                 db.collection(COLLECTION_NAME)
                         .document(documentId);
 
-        itemReference.update("voterList", FieldValue.arrayRemove(uid));
-        itemReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) - 1 ));
+        itemReference.update("bought", !isBought);
         getItemsFromServer();
     }
-
-    private void upVote(String documentId, String currentVoteCount) {
-        DocumentReference movieReference =
-                db.collection(COLLECTION_NAME)
-                        .document(documentId);
-
-        movieReference.update("voterList", FieldValue.arrayUnion(uid));
-        movieReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) + 1 ));
-        getItemsFromServer();
-    }
-
-
 
     private void showKeyboard(){
         InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);

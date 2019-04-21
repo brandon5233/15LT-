@@ -271,7 +271,7 @@ public class fragment_vote_movies extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             documentList = task.getResult();
-                            displayCards();
+                            displayMovies();
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -279,7 +279,7 @@ public class fragment_vote_movies extends Fragment {
                 });
     }
 
-    private void displayCards() {
+    private void displayMovies() {
         //set all cards to invisible
 
 
