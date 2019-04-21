@@ -39,12 +39,9 @@ public class fragment_food extends Fragment {
 
     private String userDisplayName, uid;
 
-    private  final Calendar calender = Calendar.getInstance();
-    private final String week_of_year = String.valueOf(calender.get(Calendar.WEEK_OF_YEAR));
-    private final String day_of_week = calender.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
-    private final String current_year = String.valueOf(calender.get(Calendar.YEAR));
-    private final String current_date = String.valueOf(calender.get(Calendar.DAY_OF_MONTH))+"."+String.valueOf(calender.get(Calendar.MONTH)+1);
-
+    private  Calendar calender;
+    private String week_of_year;
+    private String day_of_week;
     private OnFragmentInteractionListener mListener;
     Vibrator vibrator;
     public fragment_food() {
@@ -82,6 +79,12 @@ public class fragment_food extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        calender = Calendar.getInstance();
+        calender.setFirstDayOfWeek(7);
+        week_of_year = String.valueOf(calender.get(Calendar.WEEK_OF_YEAR));
+
+        day_of_week = calender.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
+        Log.d("fragment_food", "day of week : " + day_of_week);
         return inflater.inflate(R.layout.fragment_food, container, false);
     }
 
@@ -111,7 +114,10 @@ public class fragment_food extends Fragment {
         if(view!=null){
             vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
             int currentDayButtonId = getResources().getIdentifier(day_of_week, "id", getContext().getPackageName());
-            view.findViewById(currentDayButtonId).setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentAlternate));
+            if(!userDisplayName.contains("divina")){
+                view.findViewById(currentDayButtonId).setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentAlternate));
+            }
+
         }
     }
 

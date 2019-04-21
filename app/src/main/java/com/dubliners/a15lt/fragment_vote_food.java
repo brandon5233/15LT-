@@ -62,11 +62,11 @@ public class fragment_vote_food extends Fragment {
     private Context mContext;
     private static final String TAG = "Database Writer";
 
-    private  final Calendar calender = Calendar.getInstance();
-    private final String week_of_year = String.valueOf(calender.get(Calendar.WEEK_OF_YEAR));
-    private final String day_of_week = calender.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
-    private final String current_year = String.valueOf(calender.get(Calendar.YEAR));
-    private final String collectionID = current_year+".week"+week_of_year;
+    private  Calendar calender;
+    private String week_of_year;
+    private String day_of_week;
+    private String current_year;
+    private String collectionID;
     private final String COLLECTION_DISHES = "Dishes";
     private final int MAX_CARDS = 6;
 
@@ -117,6 +117,17 @@ public class fragment_vote_food extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_vote_food, container, false);
+
+
+        calender = Calendar.getInstance();
+        calender.setFirstDayOfWeek(7);
+        week_of_year = String.valueOf(calender.get(Calendar.WEEK_OF_YEAR));
+
+        day_of_week = calender.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
+        current_year = String.valueOf(calender.get(Calendar.YEAR));
+        collectionID = current_year+".week"+week_of_year;
+
+
 
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         linear_layout_hasDishes = view.findViewById(R.id.linear_layout_hasDishes);
@@ -265,6 +276,9 @@ public class fragment_vote_food extends Fragment {
     }
 
     private void getDishesFromServer(){
+        Log.d("fragment_vote_food", "CollectionId : " + collectionID);
+        Log.d("fragment_vote_food", "week of year : " + week_of_year);
+        Log.d("fragment_vote_food", String.valueOf(calender.DAY_OF_WEEK));
         db.collection(collectionID).document(selectedDay)
                 .collection(COLLECTION_DISHES)
                 .get()
