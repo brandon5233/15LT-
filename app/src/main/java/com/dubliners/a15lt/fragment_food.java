@@ -1,5 +1,6 @@
 package com.dubliners.a15lt;
 
+import android.content.ContentProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -38,7 +39,7 @@ public class fragment_food extends Fragment {
     private String mParam2;
 
     private String userDisplayName, uid;
-
+    private Context mContext;
     private  Calendar calender;
     private String week_of_year;
     private String day_of_week;
@@ -100,6 +101,7 @@ public class fragment_food extends Fragment {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
+            mContext = context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -108,14 +110,14 @@ public class fragment_food extends Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-
+        vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
 
         View view = getView();
         if(view!=null){
-            vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-            int currentDayButtonId = getResources().getIdentifier(day_of_week, "id", getContext().getPackageName());
+            vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+            int currentDayButtonId = getResources().getIdentifier(day_of_week, "id", mContext.getPackageName());
             if(!userDisplayName.contains("divina")){
-                view.findViewById(currentDayButtonId).setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentAlternate));
+                view.findViewById(currentDayButtonId).setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorAccentAlternate));
             }
 
         }

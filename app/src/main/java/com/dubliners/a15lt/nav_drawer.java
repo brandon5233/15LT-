@@ -2,7 +2,10 @@ package com.dubliners.a15lt;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -31,6 +34,7 @@ public class nav_drawer extends AppCompatActivity
 {
     String userDisplayName, uid, profilePicUrl, userEmail;
     public static int EasterEggCounter = 7;
+    private Vibrator vibrator;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,12 +150,20 @@ public class nav_drawer extends AppCompatActivity
 
     public void launchVote(View view){
         Log.d("BUTTON CLICKED", String.valueOf(view.getId()));
-        //vibrate();
+        vibrate();
         String selectedDay = getResources().getResourceEntryName(view.getId());
         Fragment voteFragment = fragment_vote_food.newInstance(userDisplayName,uid,selectedDay);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.nav_default_content, voteFragment).commit();
     }
 
+    private void vibrate(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            vibrator.vibrate(40);
+        }
+    }
 
 }
