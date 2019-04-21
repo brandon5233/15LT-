@@ -40,7 +40,7 @@ public class fragment_about extends Fragment {
                 }else if(nav_drawer.EasterEggCounter == 0){
                     try{
                         Toast.makeText(getActivity().getApplicationContext(),
-                                "Congratulations!\nYour food votes are now worth 2x !\nHappy Easter!",
+                                "Congratulations!\nYour votes are now worth 2x !\nHappy Easter!",
                                 Toast.LENGTH_LONG).show();
                     }catch (NullPointerException e){e.printStackTrace();}
                 }

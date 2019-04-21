@@ -243,7 +243,7 @@ public class fragment_vote_movies extends Fragment {
         movie.setCreator(userDisplayName);
         movie.setCreator_uid(uid);
         movie.setMovieName(movieName);
-        movie.setVoteCount("1");
+        movie.setVoteCount(((nav_drawer.EasterEggCounter==0)?"2":"1"));
         movie.setVoterList(Arrays.asList(uid));
         db.collection(COLLECTION_NAME)
                 .add(movie)
@@ -390,7 +390,7 @@ public class fragment_vote_movies extends Fragment {
                         .document(documentId);
 
         movieReference.update("voterList", FieldValue.arrayRemove(uid));
-        movieReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) - 1 ));
+        movieReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) - ((nav_drawer.EasterEggCounter==0)?2:1) ));
         getMoviesFromServer();
     }
 
@@ -400,7 +400,7 @@ public class fragment_vote_movies extends Fragment {
                         .document(documentId);
 
         movieReference.update("voterList", FieldValue.arrayUnion(uid));
-        movieReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) + 1 ));
+        movieReference.update("voteCount", String.valueOf(Integer.parseInt(currentVoteCount) + ((nav_drawer.EasterEggCounter==0)?2:1) ));
         getMoviesFromServer();
     }
 
