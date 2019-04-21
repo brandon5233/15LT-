@@ -25,7 +25,8 @@ public class nav_drawer extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
                     fragment_vote_movies.OnFragmentInteractionListener,
                     fragment_vote_food.OnFragmentInteractionListener,
-                    fragment_food.OnFragmentInteractionListener
+                    fragment_food.OnFragmentInteractionListener,
+                    fragment_vote_shopping.OnFragmentInteractionListener
 {
     String userDisplayName, uid, profilePicUrl, userEmail;
 
@@ -116,7 +117,7 @@ public class nav_drawer extends AppCompatActivity
             fragment = fragment_food.newInstance(userDisplayName, uid);
 
         } else if (id == R.id.nav_shopping) {
-
+            fragment = fragment_vote_shopping.newInstance(userDisplayName,uid);
         } else if (id == R.id.nav_misc) {
 
         } else if (id == R.id.nav_about) {
