@@ -30,7 +30,7 @@ public class nav_drawer extends AppCompatActivity
                     fragment_vote_misc.OnFragmentInteractionListener
 {
     String userDisplayName, uid, profilePicUrl, userEmail;
-    public static int EasterEggCounter = 5;
+    public static int EasterEggCounter = 7;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
