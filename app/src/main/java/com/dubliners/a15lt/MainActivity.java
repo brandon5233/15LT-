@@ -123,10 +123,16 @@ public class MainActivity extends AppCompatActivity {
         String displayName = "defaultName";
         if(user!=null){
             displayName = user.getDisplayName();
-            Intent myIntent = new Intent(MainActivity.this, weekdays.class);
+
+            String profilePicUrl = user.getPhotoUrl().toString();
+            Intent myIntent = new Intent(MainActivity.this, nav_drawer.class);
             myIntent.putExtra("userDisplayName", user.getDisplayName());
             myIntent.putExtra("uid", user.getUid());
-            MainActivity.this.startActivityForResult(myIntent, 100);
+            myIntent.putExtra("userEmail", user.getEmail());
+            myIntent.putExtra("profilePicUrl", profilePicUrl);
+            //MainActivity.this.startActivityForResult(myIntent, 100);
+            MainActivity.this.startActivity(myIntent);
+            //finish();
         }
         else{
             signIn();
