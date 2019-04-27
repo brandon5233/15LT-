@@ -51,9 +51,10 @@ public class fragment_vote_shopping extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private Context mContext;
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private Context mContext;
     private final int MAX_CARDS = 30;
     // TODO: Rename and change types of parameters
     private final String TAG = "FRAGMENT_VOTE_SHOPPING";
@@ -132,7 +133,7 @@ public class fragment_vote_shopping extends Fragment {
                         showDialogBox("Add an item", "", "", "add");
                     }
                     else{
-                        Toast.makeText(getContext(), "Too many items!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Too many items!", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -147,7 +148,7 @@ public class fragment_vote_shopping extends Fragment {
                 }
             });
 
-            vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
 
         }
 
@@ -199,11 +200,11 @@ public class fragment_vote_shopping extends Fragment {
     }
 
     private void showDialogBox(String alertBoxTitle, final String documentId, String defaultString, final String task){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(alertBoxTitle.trim());
 
         // Set up the input
-        final EditText input = new EditText(getContext());
+        final EditText input = new EditText(mContext);
         input.setText(defaultString);
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -217,7 +218,7 @@ public class fragment_vote_shopping extends Fragment {
                 itemName = WordUtils.capitalizeFully(itemName);
                 hideKeyboard();
                 if(itemName.trim().equals("")){
-                    Toast.makeText(getContext(), "We can't vote for a blank item!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "We can't vote for a blank item!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -253,7 +254,7 @@ public class fragment_vote_shopping extends Fragment {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
-                        Toast.makeText(getContext(), itemName + " added !", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, itemName + " added !", Toast.LENGTH_SHORT).show();
                         getItemsFromServer();
                     }
                 })
@@ -368,7 +369,7 @@ public class fragment_vote_shopping extends Fragment {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        Toast.makeText(getContext(), "Item Updated!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Item Updated!", Toast.LENGTH_SHORT).show();
                         getItemsFromServer();
                     }
                 })
@@ -376,7 +377,7 @@ public class fragment_vote_shopping extends Fragment {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error updating document", e);
-                        Toast.makeText(getContext(), "Something went wrong, try again later.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Something went wrong, try again later.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -391,12 +392,12 @@ public class fragment_vote_shopping extends Fragment {
     }
 
     private void showKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     private void hideKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
     private void vibrate(){

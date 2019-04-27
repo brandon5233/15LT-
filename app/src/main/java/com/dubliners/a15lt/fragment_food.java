@@ -80,6 +80,7 @@ public class fragment_food extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
         calender = Calendar.getInstance();
         calender.setFirstDayOfWeek(7);
         week_of_year = String.valueOf(calender.get(Calendar.WEEK_OF_YEAR));
@@ -110,11 +111,11 @@ public class fragment_food extends Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+
 
         View view = getView();
         if(view!=null){
-            vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator = (Vibrator) mContext.getSystemService(mContext.VIBRATOR_SERVICE);
             int currentDayButtonId = getResources().getIdentifier(day_of_week, "id", mContext.getPackageName());
             if(!userDisplayName.contains("divina")){
                 view.findViewById(currentDayButtonId).setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorAccentAlternate));

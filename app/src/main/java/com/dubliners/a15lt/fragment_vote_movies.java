@@ -53,6 +53,7 @@ public class fragment_vote_movies extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private Context mContext;
     private final int MAX_CARDS = 6;
     // TODO: Rename and change types of parameters
     private final String TAG = "FRAGMENT_VOTE_MOVIES";
@@ -131,7 +132,7 @@ public class fragment_vote_movies extends Fragment {
                         showDialogBox("Add a movie", "", "", "add");
                     }
                     else{
-                        Toast.makeText(getContext(), "Too many movies !", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Too many movies !", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -146,7 +147,7 @@ public class fragment_vote_movies extends Fragment {
                 }
             });
 
-            vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
 
         }
 
@@ -168,6 +169,7 @@ public class fragment_vote_movies extends Fragment {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
+            mContext = context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -196,11 +198,11 @@ public class fragment_vote_movies extends Fragment {
     }
 
     private void showDialogBox(String alertBoxTitle, final String documentId, String defaultString, final String task){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(alertBoxTitle.trim());
 
         // Set up the input
-        final EditText input = new EditText(getContext());
+        final EditText input = new EditText(mContext);
         input.setText(defaultString);
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -214,7 +216,7 @@ public class fragment_vote_movies extends Fragment {
                 movieName = WordUtils.capitalizeFully(movieName);
                 hideKeyboard();
                 if(movieName.trim().equals("")){
-                    Toast.makeText(getContext(), "We can't vote for a blank movie!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "We can't vote for a blank movie!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -251,7 +253,7 @@ public class fragment_vote_movies extends Fragment {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
-                        Toast.makeText(getContext(), movieName + " added !", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, movieName + " added !", Toast.LENGTH_SHORT).show();
                         getMoviesFromServer();
                     }
                 })
@@ -340,12 +342,12 @@ public class fragment_vote_movies extends Fragment {
                     voteCount.setText(movie.getVoteCount());
 
                     if(movie.getVoterList().contains(uid)){
-                        movieName.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
-                        voteCount.setTextColor(ContextCompat.getColor(getContext(),R.color.colorAccent));
+                        movieName.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+                        voteCount.setTextColor(ContextCompat.getColor(mContext,R.color.colorAccent));
                     }
                     else{
-                        movieName.setTextColor(ContextCompat.getColor(getContext(),R.color.textPrimary));
-                        voteCount.setTextColor(ContextCompat.getColor(getContext(),R.color.textSecondary));
+                        movieName.setTextColor(ContextCompat.getColor(mContext,R.color.textPrimary));
+                        voteCount.setTextColor(ContextCompat.getColor(mContext,R.color.textSecondary));
                     }
 
                     counter = (counter<=4)?counter+1:5;
@@ -371,7 +373,7 @@ public class fragment_vote_movies extends Fragment {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        Toast.makeText(getContext(), "Movie Updated!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Movie Updated!", Toast.LENGTH_SHORT).show();
                         getMoviesFromServer();
                     }
                 })
@@ -379,7 +381,7 @@ public class fragment_vote_movies extends Fragment {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error updating document", e);
-                        Toast.makeText(getContext(), "Something went wrong, try again later.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Something went wrong, try again later.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -407,12 +409,12 @@ public class fragment_vote_movies extends Fragment {
 
 
     private void showKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     private void hideKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
     private void vibrate(){

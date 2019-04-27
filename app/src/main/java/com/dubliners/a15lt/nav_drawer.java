@@ -1,5 +1,6 @@
 package com.dubliners.a15lt;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -41,6 +42,8 @@ public class nav_drawer extends AppCompatActivity
         setContentView(R.layout.activity_nav_drawer);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -113,11 +116,7 @@ public class nav_drawer extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_movies) {
-            try {
                 fragment = fragment_vote_movies.newInstance(userDisplayName, uid);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         } else if (id == R.id.nav_food) {
             fragment = fragment_food.newInstance(userDisplayName, uid);
 
@@ -127,17 +126,15 @@ public class nav_drawer extends AppCompatActivity
             fragment = fragment_vote_misc.newInstance(userDisplayName,uid);
         } else if (id == R.id.nav_about) {
                 fragment = new fragment_about();
-        } //else if (id == R.id.nav_send) {}
-
-
+        } else {
+            fragment = fragment_vote_movies.newInstance(userDisplayName, uid);
+        }
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         /*getFragmentManager().beginTransaction()
                 .replace(R.id.linear_temp, fragment)
                 .commit();*/
         fragmentManager.beginTransaction().replace(R.id.nav_default_content, fragment).commit();
-
-
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

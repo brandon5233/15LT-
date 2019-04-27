@@ -134,7 +134,7 @@ public class fragment_vote_food extends Fragment {
         linear_layout_noDishes = view.findViewById(R.id.linear_layout_noDishes);
         linear_layout_hasDishes.setVisibility(View.GONE);
 
-        vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
         getDishesFromServer();
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
@@ -175,9 +175,10 @@ public class fragment_vote_food extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
+
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
+            mContext = context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -206,11 +207,11 @@ public class fragment_vote_food extends Fragment {
     }
 
     private void showDialogBox(String alertBoxTitle, final String documentId, String defaultString, final String task){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(alertBoxTitle.trim());
 
         // Set up the input
-        final EditText input = new EditText(getContext());
+        final EditText input = new EditText(mContext);
         input.setText(defaultString);
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -224,7 +225,7 @@ public class fragment_vote_food extends Fragment {
                 dishName = WordUtils.capitalizeFully(dishName);
                 hideKeyboard();
                 if(dishName.trim().equals("")){
-                    Toast.makeText(getContext(), "We can't vote for a blank dish!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "We can't vote for a blank dish!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -263,7 +264,7 @@ public class fragment_vote_food extends Fragment {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
-                        Toast.makeText(getContext(), dishName + " added !", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, dishName + " added !", Toast.LENGTH_SHORT).show();
                         getDishesFromServer();
                     }
                 })
@@ -388,7 +389,7 @@ public class fragment_vote_food extends Fragment {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        Toast.makeText(getContext(), "Dish Updated!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Dish Updated!", Toast.LENGTH_SHORT).show();
                         getDishesFromServer();
                     }
                 })
@@ -396,7 +397,7 @@ public class fragment_vote_food extends Fragment {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error updating document", e);
-                        Toast.makeText(getContext(), "Something went wrong, try again later.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Something went wrong, try again later.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -426,12 +427,12 @@ public class fragment_vote_food extends Fragment {
 
 
     private void showKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     private void hideKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
     private void vibrate(){
