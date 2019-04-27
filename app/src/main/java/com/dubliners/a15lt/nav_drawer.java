@@ -23,6 +23,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.squareup.picasso.Picasso;
 
 public class nav_drawer extends AppCompatActivity
@@ -70,6 +74,15 @@ public class nav_drawer extends AppCompatActivity
 
         tv_userDisplayName.setText(userDisplayName);
         tv_userEmail.setText(userEmail);
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( nav_drawer.this,  new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                String newToken = instanceIdResult.getToken();
+                Log.e("newToken",newToken);
+
+            }
+        });
 
        Fragment fragment = fragment_food.newInstance(userDisplayName, uid);
        getSupportFragmentManager().beginTransaction().replace(R.id.nav_default_content, fragment).commit();
