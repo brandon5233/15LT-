@@ -287,7 +287,7 @@ public class fragment_vote_shopping extends Fragment {
 
 
         for(int i=0;i<MAX_CARDS;i++){
-            linear_layout_hasItems.getChildAt(i).setVisibility(View.INVISIBLE);
+            linear_layout_hasItems.getChildAt(i).setVisibility(View.GONE);
         }
 
         if(documentList!=null){

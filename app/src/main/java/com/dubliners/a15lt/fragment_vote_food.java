@@ -301,7 +301,7 @@ public class fragment_vote_food extends Fragment {
 
 
         for(int i=0;i<MAX_CARDS;i++){
-            linear_layout_hasDishes.getChildAt(i).setVisibility(View.INVISIBLE);
+            linear_layout_hasDishes.getChildAt(i).setVisibility(View.GONE);
         }
 
         if(documentList!=null){
