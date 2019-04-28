@@ -5,8 +5,10 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.support.annotation.LongDef;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -22,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +35,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -40,6 +44,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
+
 
 
 /**
@@ -62,7 +67,7 @@ public class fragment_vote_food extends Fragment {
     private Context mContext;
     private static final String TAG = "Database Writer";
 
-    private  Calendar calender;
+    private  Calendar calender , votingEndTime ;
     private String week_of_year;
     private String day_of_week;
     private String current_year;
@@ -70,7 +75,7 @@ public class fragment_vote_food extends Fragment {
     private String COLLECTION_NAME = "Food";
     private final String SUB_COLLECTION_NAME = "Dishes";
     private final int MAX_CARDS = 6;
-
+    private boolean needInitSetup = false;
 
     private Vibrator vibrator;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -79,6 +84,8 @@ public class fragment_vote_food extends Fragment {
     private QuerySnapshot documentList = null;
     private OnFragmentInteractionListener mListener;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView countDown;
+    private boolean isVotingClosed = false;
 
     public fragment_vote_food() {
         // Required empty public constructor
@@ -119,6 +126,7 @@ public class fragment_vote_food extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_vote_food, container, false);
 
+        countDown = view.findViewById(R.id.tv_countDown);
 
         calender = Calendar.getInstance();
         calender.setFirstDayOfWeek(7);
@@ -128,6 +136,53 @@ public class fragment_vote_food extends Fragment {
         current_year = String.valueOf(calender.get(Calendar.YEAR));
         collectionID = current_year+".week"+week_of_year;
 
+        votingEndTime = Calendar.getInstance();
+        votingEndTime.set(Calendar.HOUR, 10);
+        votingEndTime.set(Calendar.HOUR_OF_DAY, 10);
+        votingEndTime.set(Calendar.MINUTE,0);
+        votingEndTime.set(Calendar.SECOND,0);
+        votingEndTime.set(Calendar.MILLISECOND,0);
+
+        Log.e("Voting End time :", votingEndTime.getTime().toString());
+        Log.e("Current time :", calender.getTime().toString());
+        Long remaining_mills = votingEndTime.getTimeInMillis() - calender.getTimeInMillis();
+        Log.e("Remaining time milis", String.valueOf(remaining_mills));
+
+        /*DateFormat formatter = new SimpleDateFormat("hh:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Log.e("Remaining time: ", formatter.format(remaining_mills));*/
+
+        final long millis = remaining_mills % 1000;
+        long second = (remaining_mills / 1000) % 60;
+        long minute = (remaining_mills / (1000 * 60)) % 60;
+        long hour = (remaining_mills / (1000 * 60 * 60)) % 24;
+
+        String time = String.format("%02d:%02d:%02d", hour, minute,second);
+
+
+        Log.e("Remaining time alt" , time);
+
+
+        if(remaining_mills>0){
+
+            new CountDownTimer(remaining_mills, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+                    long second = (millisUntilFinished / 1000) % 60;
+                    long minute = (millisUntilFinished / (1000 * 60)) % 60;
+                    long hour = (millisUntilFinished / (1000 * 60 * 60)) % 24;
+                    countDown.setText(String.format("%02d:%02d:%02d left to vote", hour, minute,second));
+                }
+
+                public void onFinish() {
+                    setVotingClosed();
+                }
+            }.start();
+
+        }
+        else {
+            needInitSetup = true;
+        }
 
 
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
@@ -146,12 +201,18 @@ public class fragment_vote_food extends Fragment {
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                         */
-                if(documentList!=null && documentList.size()<6){
-                    showDialogBox("What's cooking?", "", "", "add");
+                if(isVotingClosed){
+                    Toast.makeText(mContext, "Voting is closed for today!", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Toast.makeText(getContext(), "Too many dishes !", Toast.LENGTH_SHORT).show();
+                    if(documentList!=null && documentList.size()<6){
+                        showDialogBox("What's cooking?", "", "", "add");
+                    }
+                    else{
+                        Toast.makeText(getContext(), "Too many dishes !", Toast.LENGTH_SHORT).show();
+                    }
                 }
+
 
             }
         });
@@ -164,6 +225,20 @@ public class fragment_vote_food extends Fragment {
             }
         });
         return view;
+    }
+
+    private void setVotingClosed() {
+        isVotingClosed = true;
+            Log.e("CHECK DONE", (documentList!=null)?String.valueOf(documentList.size()):"dlIsNull");
+            if (documentList.size()>0) {
+                String todaysDish = String.valueOf(documentList.getDocuments().get(0).get("dishName"));
+                Log.e("Top of list is : ", todaysDish);
+                countDown.setText("We're having " + todaysDish + " today ! ");
+                countDown.setBackgroundColor(getResources().getColor(R.color.green));
+            } else {
+                countDown.setText("Voting Closed !");
+                countDown.setBackgroundColor(getResources().getColor(R.color.colorAccentAlternate));
+            }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -283,6 +358,7 @@ public class fragment_vote_food extends Fragment {
         Log.d("fragment_vote_food", String.valueOf(calender.DAY_OF_WEEK));
         db.collection(collectionID).document(selectedDay)
                 .collection(SUB_COLLECTION_NAME)
+                .orderBy("voteCount", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -290,6 +366,10 @@ public class fragment_vote_food extends Fragment {
                         if (task.isSuccessful()) {
                             documentList = task.getResult();
                             displayCards();
+                            if(needInitSetup){
+                                needInitSetup = false;
+                                setVotingClosed();
+                            }
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -306,6 +386,7 @@ public class fragment_vote_food extends Fragment {
         }
 
         if(documentList!=null){
+
 
             if(documentList.size()==0){
                 linear_layout_hasDishes.setVisibility(View.GONE);
@@ -327,12 +408,18 @@ public class fragment_vote_food extends Fragment {
                                                 @Override
                                                 public void onClick(View v) {
                                                     vibrate();
-                                                    if (dish.getVoterList().contains(uid)){
-                                                        downVote(document.getId(), dish.getVoteCount());
+                                                    if(isVotingClosed){
+                                                        Toast.makeText(mContext, "Voting is closed for today!", Toast.LENGTH_SHORT).show();
                                                     }
                                                     else{
-                                                        upVote(document.getId(), dish.getVoteCount());
+                                                        if (dish.getVoterList().contains(uid)){
+                                                            downVote(document.getId(), dish.getVoteCount());
+                                                        }
+                                                        else{
+                                                            upVote(document.getId(), dish.getVoteCount());
+                                                        }
                                                     }
+
                                                 }
                                             }
                     );
@@ -341,8 +428,12 @@ public class fragment_vote_food extends Fragment {
                         @Override
                         public boolean onLongClick(View v) {
                             vibrate();
-                            if(dish.getCreator_uid().equals(uid)){
-                                showDialogBox("Edit Dish", document.getId(), dish.getDishName(), "edit");
+                            if(isVotingClosed){
+                                Toast.makeText(mContext, "Voting is closed for today!", Toast.LENGTH_SHORT).show();
+                            }else{
+                                if(dish.getCreator_uid().equals(uid)){
+                                    showDialogBox("Edit Dish", document.getId(), dish.getDishName(), "edit");
+                                }
                             }
                             return false;
                         }
@@ -376,7 +467,6 @@ public class fragment_vote_food extends Fragment {
             linear_layout_hasDishes.setVisibility(View.GONE);
             linear_layout_noDishes.setVisibility(View.VISIBLE);
         }
-
     }
 
     private void editDish(String documentId, String dishName) {
