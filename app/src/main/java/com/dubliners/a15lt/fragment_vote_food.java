@@ -136,9 +136,58 @@ public class fragment_vote_food extends Fragment {
         current_year = String.valueOf(calender.get(Calendar.YEAR));
         collectionID = current_year+".week"+week_of_year;
 
+        if(day_of_week.equalsIgnoreCase(selectedDay)){
+            displayCountDownTimer();
+        }else{
+            countDown.setVisibility(View.INVISIBLE);
+        }
+
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        linear_layout_hasDishes = view.findViewById(R.id.linear_layout_hasDishes);
+        linear_layout_noDishes = view.findViewById(R.id.linear_layout_noDishes);
+        linear_layout_hasDishes.setVisibility(View.GONE);
+
+        vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+        getDishesFromServer();
+
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                vibrate();
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                        */
+                if(isVotingClosed){
+                    Toast.makeText(mContext, "Voting is closed for today!", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    if(documentList!=null && documentList.size()<6){
+                        showDialogBox("What's cooking?", "", "", "add");
+                    }
+                    else{
+                        Toast.makeText(getContext(), "Too many dishes !", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+
+            }
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getDishesFromServer();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        return view;
+    }
+
+    private void displayCountDownTimer() {
         votingEndTime = Calendar.getInstance();
-        votingEndTime.set(Calendar.HOUR, 10);
-        votingEndTime.set(Calendar.HOUR_OF_DAY, 10);
+        votingEndTime.set(Calendar.HOUR, 18);
+        votingEndTime.set(Calendar.HOUR_OF_DAY, 18);
         votingEndTime.set(Calendar.MINUTE,0);
         votingEndTime.set(Calendar.SECOND,0);
         votingEndTime.set(Calendar.MILLISECOND,0);
@@ -184,47 +233,6 @@ public class fragment_vote_food extends Fragment {
             needInitSetup = true;
         }
 
-
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
-        linear_layout_hasDishes = view.findViewById(R.id.linear_layout_hasDishes);
-        linear_layout_noDishes = view.findViewById(R.id.linear_layout_noDishes);
-        linear_layout_hasDishes.setVisibility(View.GONE);
-
-        vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-        getDishesFromServer();
-
-        FloatingActionButton fab = view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                vibrate();
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                        */
-                if(isVotingClosed){
-                    Toast.makeText(mContext, "Voting is closed for today!", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    if(documentList!=null && documentList.size()<6){
-                        showDialogBox("What's cooking?", "", "", "add");
-                    }
-                    else{
-                        Toast.makeText(getContext(), "Too many dishes !", Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-
-            }
-        });
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getDishesFromServer();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-        return view;
     }
 
     private void setVotingClosed() {

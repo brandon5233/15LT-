@@ -33,6 +33,7 @@ public class fragment_food extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM3 = "param3";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -73,7 +74,28 @@ public class fragment_food extends Fragment {
         if (getArguments() != null) {
             userDisplayName = getArguments().getString(ARG_PARAM1);
             uid = getArguments().getString(ARG_PARAM2);
+
+            if(nav_drawer.firstFoodLaunchCount==0){
+                nav_drawer.firstFoodLaunchCount++;
+                Log.e("Fragment Food", "Forwarding @ count = " + nav_drawer.firstFoodLaunchCount);
+                calender = Calendar.getInstance();
+                calender.setFirstDayOfWeek(7);
+                day_of_week = calender.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
+
+                try{
+                    Fragment voteFragment = fragment_vote_food.newInstance(userDisplayName,uid,day_of_week);
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    //FragmentManager fragmentManager = getChildFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.nav_default_content, voteFragment).commit();
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
+
+
+            }
         }
+
+
     }
 
     @Override
@@ -103,6 +125,7 @@ public class fragment_food extends Fragment {
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
             mContext = context;
+
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");

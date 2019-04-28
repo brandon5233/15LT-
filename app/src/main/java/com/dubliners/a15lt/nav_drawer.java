@@ -39,6 +39,7 @@ public class nav_drawer extends AppCompatActivity
 {
     String userDisplayName, uid, profilePicUrl, userEmail;
     public static int EasterEggCounter = 7;
+    public static int firstFoodLaunchCount = 0;
     private Vibrator vibrator;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +141,7 @@ public class nav_drawer extends AppCompatActivity
         } else if (id == R.id.nav_about) {
                 fragment = new fragment_about();
         } else {
-            fragment = fragment_vote_movies.newInstance(userDisplayName, uid);
+            fragment = fragment_food.newInstance(userDisplayName, uid);
         }
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -164,7 +165,7 @@ public class nav_drawer extends AppCompatActivity
         String selectedDay = getResources().getResourceEntryName(view.getId());
         Fragment voteFragment = fragment_vote_food.newInstance(userDisplayName,uid,selectedDay);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.nav_default_content, voteFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.nav_default_content, voteFragment).addToBackStack(null).commit();
     }
 
     private void vibrate(){
