@@ -33,7 +33,7 @@
     <string name="nav_title_submenu">Accessability</string>
     <string name="Address">15 Liffey Terrace\nLiffey Valley Park\nLucan\nCo. Dublin\nK78 E278</string>
     <string name="alarm_code">Alarm Code : 4854</string>
-    <string name="app_version">App Version : 0.1.0</string>
+    <string name="app_version">App Version : 1.1.0</string>
     <string name="changelog">Changelog : \n-Voting ends at 6 every day! \n-Notifications! \n-An Easter Egg \n-One step closer to production</string>
     <string name="fragment_shopping_no_items">Its empty here  Add Items by clicking on the  Orange Button below...</string>
 </resources>
