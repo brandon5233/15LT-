@@ -67,7 +67,8 @@ public class fragment_vote_food extends Fragment {
     private String day_of_week;
     private String current_year;
     private String collectionID;
-    private final String COLLECTION_DISHES = "Dishes";
+    private String COLLECTION_NAME = "Food";
+    private final String SUB_COLLECTION_NAME = "Dishes";
     private final int MAX_CARDS = 6;
 
 
@@ -258,7 +259,7 @@ public class fragment_vote_food extends Fragment {
         dish.setVoterList(Arrays.asList(uid));
         db.collection(collectionID)
                 .document(selectedDay)
-                .collection(COLLECTION_DISHES)
+                .collection(SUB_COLLECTION_NAME)
                 .add(dish)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
@@ -281,7 +282,7 @@ public class fragment_vote_food extends Fragment {
         Log.d("fragment_vote_food", "week of year : " + week_of_year);
         Log.d("fragment_vote_food", String.valueOf(calender.DAY_OF_WEEK));
         db.collection(collectionID).document(selectedDay)
-                .collection(COLLECTION_DISHES)
+                .collection(SUB_COLLECTION_NAME)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -381,7 +382,7 @@ public class fragment_vote_food extends Fragment {
     private void editDish(String documentId, String dishName) {
         DocumentReference dishReference =
                 db.collection(collectionID).document(selectedDay)
-                        .collection(COLLECTION_DISHES)
+                        .collection(SUB_COLLECTION_NAME)
                         .document(documentId);
 
         dishReference.update("dishName",dishName )
@@ -405,7 +406,7 @@ public class fragment_vote_food extends Fragment {
     private void downVote(String documentId, String currentVoteCount) {
         DocumentReference dishReference =
                 db.collection(collectionID).document(selectedDay)
-                        .collection(COLLECTION_DISHES)
+                        .collection(SUB_COLLECTION_NAME)
                         .document(documentId);
 
         dishReference.update("voterList", FieldValue.arrayRemove(uid));
@@ -416,7 +417,7 @@ public class fragment_vote_food extends Fragment {
     private void upVote(String documentId, String currentVoteCount) {
         DocumentReference dishReference =
                 db.collection(collectionID).document(selectedDay)
-                        .collection(COLLECTION_DISHES)
+                        .collection(SUB_COLLECTION_NAME)
                         .document(documentId);
 
         dishReference.update("voterList", FieldValue.arrayUnion(uid));
